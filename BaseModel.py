@@ -14,7 +14,7 @@ class BaseModel(BaseDockex):
     and ```fit_predict``` methods.
 
     Subclasses must provide an ```instantiate_model``` method that sets a
-    ```self.model``` with ```self.modelfit``` and ```self.modelpredict```
+    ```self.model``` with ```self.model.fit``` and ```self.model.predict```
     methods.
 
     Subclasses may optionally provide ```load``` and ```save``` methods for
@@ -54,12 +54,12 @@ class BaseModel(BaseDockex):
 
     __Output Pathnames__
 
-    * **train_predict_npy** (numpy file): 2D array of training set predictions.
+    * **predict_train_npy** (numpy file): 2D array of training set predictions.
 
-    * **valid_predict_npy** (numpy file): 2D array of validation set
+    * **predict_valid_npy** (numpy file): 2D array of validation set
     predictions.
 
-    * **test_predict_npy** (numpy file): 2D array of testing set predictions.
+    * **predict_test_npy** (numpy file): 2D array of testing set predictions.
     """
     
     def __init__(self, input_args):
@@ -80,9 +80,9 @@ class BaseModel(BaseDockex):
         self.model = None
         
         # output data
-        self.train_predict = None
-        self.valid_predict = None
-        self.test_predict = None
+        self.predict_train = None
+        self.predict_valid = None
+        self.predict_test = None
 
     def set_random_seeds(self):
         if self.random_seed is not None:
@@ -134,27 +134,27 @@ class BaseModel(BaseDockex):
     def predict(self):
         print('Predicting')
         if self.X_train is not None:
-            self.train_predict = self.model.predict(self.X_train)
+            self.predict_train = self.model.predict(self.X_train)
 
         if self.X_valid is not None:
-            self.valid_predict = self.model.predict(self.X_valid)
+            self.predict_valid = self.model.predict(self.X_valid)
 
         if self.X_test is not None:
-            self.test_predict = self.model.predict(self.X_test)
+            self.predict_test = self.model.predict(self.X_test)
 
     def load(self):
         raise NotImplementedError
 
     def save_output_arrays(self):
         print('Writing output arrays')
-        if self.train_predict is not None:
-            np.save(self.output_pathnames['train_predict_npy'], self.train_predict)
+        if self.predict_train is not None:
+            np.save(self.output_pathnames['predict_train_npy'], self.predict_train)
 
-        if self.valid_predict is not None:
-            np.save(self.output_pathnames['valid_predict_npy'], self.valid_predict)
+        if self.predict_valid is not None:
+            np.save(self.output_pathnames['predict_valid_npy'], self.predict_valid)
 
-        if self.test_predict is not None:
-            np.save(self.output_pathnames['test_predict_npy'], self.test_predict)
+        if self.predict_test is not None:
+            np.save(self.output_pathnames['predict_test_npy'], self.predict_test)
 
     def save(self):
         raise NotImplementedError
