@@ -37,7 +37,7 @@ loaded and saved with numpy. This class exposes ```fit```, ```predict```,
 and ```fit_predict``` methods. 
 
 Subclasses must provide an ```instantiate_model``` method that sets a
-```self.model``` with ```self.modelfit``` and ```self.modelpredict```
+```self.model``` with ```self.model.fit``` and ```self.model.predict```
 methods.
 
 Subclasses may optionally provide ```load``` and ```save``` methods for 
@@ -77,12 +77,12 @@ __Input Pathnames__
 
 __Output Pathnames__
 
-* **train_predict_npy** (numpy file): 2D array of training set predictions.
+* **predict_train_npy** (numpy file): 2D array of training set predictions.
 
-* **valid_predict_npy** (numpy file): 2D array of validation set 
+* **predict_valid_npy** (numpy file): 2D array of validation set 
 predictions.
 
-* **test_predict_npy** (numpy file): 2D array of testing set predictions.
+* **predict_test_npy** (numpy file): 2D array of testing set predictions.
 
 <a name="BaseJoblibModel"></a>
 ## BaseJoblibModel
