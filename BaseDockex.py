@@ -35,7 +35,7 @@ class BaseDockex(abc.ABC):
 
     @config.setter
     def config(self, value):
-        raise AttributeError('Must be set through JSON file')
+        raise AttributeError("Must be set through JSON file")
 
     @property
     def params(self):
@@ -43,7 +43,7 @@ class BaseDockex(abc.ABC):
 
     @params.setter
     def params(self, value):
-        raise AttributeError('Must be set through JSON file')
+        raise AttributeError("Must be set through JSON file")
 
     @property
     def input_pathnames(self):
@@ -51,7 +51,7 @@ class BaseDockex(abc.ABC):
 
     @input_pathnames.setter
     def input_pathnames(self, value):
-        raise AttributeError('Must be set through JSON file')
+        raise AttributeError("Must be set through JSON file")
 
     @property
     def output_pathnames(self):
@@ -59,7 +59,7 @@ class BaseDockex(abc.ABC):
 
     @output_pathnames.setter
     def output_pathnames(self, value):
-        raise AttributeError('Must be set through JSON file')
+        raise AttributeError("Must be set through JSON file")
 
     @abc.abstractmethod
     def run(self):

@@ -22,14 +22,14 @@ class BaseKerasModel(BaseModel):
     def __init__(self, input_args):
         super().__init__(input_args)
 
-        self.batch_size = self.params['batch_size']
-        self.epochs = self.params['epochs']
+        self.batch_size = self.params["batch_size"]
+        self.epochs = self.params["epochs"]
 
         self.callbacks = []
 
     def set_random_seeds(self):
         if self.random_seed is not None:
-            print('Setting random seeds')
+            print("Setting random seeds")
             np.random.seed(self.random_seed)
             random.seed(self.random_seed)
             tf.random.set_seed(self.random_seed)
@@ -46,7 +46,7 @@ class BaseKerasModel(BaseModel):
         else:
             validation_data = None
 
-        print('Fitting model')
+        print("Fitting model")
         self.model.fit(
             self.X_train,
             self.y_train,
@@ -54,20 +54,24 @@ class BaseKerasModel(BaseModel):
             epochs=self.epochs,
             validation_data=validation_data,
             callbacks=self.callbacks,
-            verbose=2
+            verbose=2,
         )
 
     def load(self):
-        if self.input_pathnames['model_keras'] is not None:
-            print('Loading model')
-            self.model = load_model(self.input_pathnames['model_keras'])
+        if self.input_pathnames["model_keras"] is not None:
+            print("Loading model")
+            self.model = load_model(self.input_pathnames["model_keras"])
 
         else:
-            raise ValueError('Input pathname "model_keras" must point to a saved model.')
+            raise ValueError(
+                'Input pathname "model_keras" must point to a saved model.'
+            )
 
     def save(self):
-        if self.method == 'predict':
-            warnings.warn("User requested save model when model was already loaded from file. Skipping model save.")
+        if self.method == "predict":
+            warnings.warn(
+                "User requested save model when model was already loaded from file. Skipping model save."
+            )
         else:
-            print('Saving model')
-            self.model.save(self.output_pathnames['model_keras'])
+            print("Saving model")
+            self.model.save(self.output_pathnames["model_keras"])

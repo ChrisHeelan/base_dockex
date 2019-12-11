@@ -25,17 +25,21 @@ class BaseJoblibModel(BaseModel):
         pass
 
     def load(self):
-        if self.input_pathnames['model_joblib'] is not None:
-            print('Loading model')
-            self.model = joblib.load(self.input_pathnames['model_joblib'])
+        if self.input_pathnames["model_joblib"] is not None:
+            print("Loading model")
+            self.model = joblib.load(self.input_pathnames["model_joblib"])
 
         else:
-            raise ValueError('Input pathname "model_joblib" must point to a saved model.')
+            raise ValueError(
+                'Input pathname "model_joblib" must point to a saved model.'
+            )
 
     def save(self):
-        if self.method == 'predict':
-            warnings.warn("User requested save model when model was already loaded from file. Skipping model save.")
+        if self.method == "predict":
+            warnings.warn(
+                "User requested save model when model was already loaded from file. Skipping model save."
+            )
         else:
-            print('Saving model')
-            with open(self.output_pathnames['model_joblib'], 'wb') as model_file:
+            print("Saving model")
+            with open(self.output_pathnames["model_joblib"], "wb") as model_file:
                 joblib.dump(self.model, model_file)
