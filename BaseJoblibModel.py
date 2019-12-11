@@ -7,7 +7,7 @@ from .BaseModel import BaseModel
 
 class BaseJoblibModel(BaseModel):
     """
-    dockex ```BaseModel``` base class with joblib ```load``` and ```save```
+    Dockex ```BaseModel``` base class with joblib ```load``` and ```save```
     methods.
 
     Subclasses must provide an ```instantiate_model``` method that sets a

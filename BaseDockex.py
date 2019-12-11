@@ -4,9 +4,9 @@ import json
 
 class BaseDockex(abc.ABC):
     """
-    dockex module base class.
+    Dockex module base class.
 
-    This base class reads a JSON file for a dockex experiment job and extracts
+    This base class reads a JSON file for a Dockex experiment job and extracts
     the params, input_pathnames, and output_pathnames.
 
     Subclasses must implement the ```run``` method.

@@ -1,5 +1,5 @@
 # base_dockex
-A collection of Python base classes for [dockex](https://github.com/ConnexonSystems/dockex) modules. 
+A collection of Python base classes for [Dockex](https://github.com/ConnexonSystems/dockex) modules. 
 
 Python 3.4+
 
@@ -13,9 +13,9 @@ Python 3.4+
 <a name="BaseDockex"></a>
 ## BaseDockex
 
-dockex module base class.
+Dockex module base class.
 
-This base class reads a JSON file for a dockex experiment job and extracts
+This base class reads a JSON file for a Dockex experiment job and extracts
 the params, input_pathnames, and output_pathnames.
 
 Subclasses must implement the ```run``` method.
@@ -30,7 +30,7 @@ Second element must be a string pathname to a JSON file with ```params```,
 <a name="BaseModel"></a>
 ## BaseModel
 
-dockex model base class. 
+Dockex model base class. 
 
 This base class defines a model interface similar to scikit-learn. Data is 
 loaded and saved with numpy. This class exposes ```fit```, ```predict```, 
@@ -87,7 +87,7 @@ predictions.
 <a name="BaseJoblibModel"></a>
 ## BaseJoblibModel
 
-dockex ```BaseModel``` base class with joblib ```load``` and ```save```
+Dockex ```BaseModel``` base class with joblib ```load``` and ```save```
 methods.
 
 Subclasses must provide an ```instantiate_model``` method that sets a
@@ -99,7 +99,7 @@ methods.
 <a name="BaseKerasModel"></a>
 ## BaseKerasModel
 
-dockex ```BaseModel``` base class for [Keras](https://github.com/keras-team/keras)
+Dockex ```BaseModel``` base class for [Keras](https://github.com/keras-team/keras)
 models.
 
 Subclasses must provide an ```instantiate_model``` method that sets a

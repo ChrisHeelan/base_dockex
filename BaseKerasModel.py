@@ -10,7 +10,7 @@ from .BaseModel import BaseModel
 
 class BaseKerasModel(BaseModel):
     """
-    dockex ```BaseModel``` base class for [Keras](https://github.com/keras-team/keras)
+    Dockex ```BaseModel``` base class for [Keras](https://github.com/keras-team/keras)
     models.
 
     Subclasses must provide an ```instantiate_model``` method that sets a

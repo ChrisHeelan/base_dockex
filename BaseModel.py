@@ -7,7 +7,7 @@ from .BaseDockex import BaseDockex
 
 class BaseModel(BaseDockex):
     """
-    dockex model base class.
+    Dockex model base class.
 
     This base class defines a model interface similar to scikit-learn. Data is
     loaded and saved with numpy. This class exposes ```fit```, ```predict```,
