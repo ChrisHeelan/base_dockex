@@ -24,9 +24,8 @@ class BaseTransformer(BaseDockex):
 
     __Parameters__
 
-    * **method (```str```)**: Required. ```fit``` to train a transformer.
-    ```fit_transform``` to train a transformer and generate transformed data. ```transform```
-    to load a previously saved transformer and generate transformed data.
+    * **method (```str```)**: Required. Defines the method of self.transformer to call. ```fit_then_transform```
+    will cause ```self.transformer.fit``` to be called followed by ```self.transformer.transform```.
 
     * **save_transformer (```bool```)**: Set to ```true``` to save the transformer if a
     ```save``` method is implemented.
@@ -74,37 +73,30 @@ class BaseTransformer(BaseDockex):
             np.random.seed(self.random_seed)
             random.seed(self.random_seed)
 
+    def safe_load_input_array(self, key, allow_pickle=False):
+        if key in self.input_pathnames.keys():
+            if self.input_pathnames[key] is not None:
+                return np.load(self.input_pathnames[key], allow_pickle=allow_pickle)
+
+        return None
+
     def load_input_arrays(self):
         print("Loading inputs")
-        if "X_train_npy" in self.input_pathnames.keys():
-            self.X_train = np.load(self.input_pathnames["X_train_npy"])
-
-        if "y_train_npy" in self.input_pathnames.keys():
-            self.y_train = np.load(self.input_pathnames["y_train_npy"], allow_pickle=True)
-
-        if "X_valid_npy" in self.input_pathnames.keys():
-            self.X_valid = np.load(self.input_pathnames["X_valid_npy"])
-
-        if "y_valid_npy" in self.input_pathnames.keys():
-            self.y_valid = np.load(self.input_pathnames["y_valid_npy"], allow_pickle=True)
-
-        if "X_test_npy" in self.input_pathnames.keys():
-            self.X_test = np.load(self.input_pathnames["X_test_npy"])
-
-        if "y_test_npy" in self.input_pathnames.keys():
-            self.y_test = np.load(self.input_pathnames["y_test_npy"], allow_pickle=True)
+        self.X_train = self.safe_load_input_array('X_train_npy')
+        self.y_train = self.safe_load_input_array('y_train_npy', allow_pickle=True)
+        self.X_valid = self.safe_load_input_array('X_valid_npy')
+        self.y_valid = self.safe_load_input_array('y_valid_npy', allow_pickle=True)
+        self.X_test = self.safe_load_input_array('X_test_npy')
+        self.y_test = self.safe_load_input_array('y_test_npy', allow_pickle=True)
 
     @abc.abstractmethod
     def instantiate_transformer(self):
         """
-        This method should set ```self.transformer``` which should include
-        ```self.transformer.fit``` and ```self.transformer.transform``` methods.
+        This method should set ```self.transformer```.
         """
         pass
 
     def fit(self):
-        self.instantiate_transformer()
-
         print("Fitting transformer")
         if self.y_train is not None:
             self.transformer.fit(self.X_train, y=self.y_train)
@@ -112,8 +104,6 @@ class BaseTransformer(BaseDockex):
             self.transformer.fit(self.X_train)
 
     def fit_transform(self):
-        self.instantiate_transformer()
-
         print("Fit_transforming transformer")
         if self.y_train is not None:
             self.transform_train = self.transformer.fit_transform(self.X_train, y=self.y_train)
@@ -167,12 +157,15 @@ class BaseTransformer(BaseDockex):
         self.load_input_arrays()
 
         if self.method == "fit":
+            self.instantiate_transformer()
             self.fit()
 
         elif self.method == "fit_transform":
+            self.instantiate_transformer()
             self.fit_transform()
 
         elif self.method == "fit_then_transform":
+            self.instantiate_transformer()
             self.fit()
             self.transform()
 
