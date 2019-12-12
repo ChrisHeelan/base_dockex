@@ -80,17 +80,13 @@ class BaseTransformer(BaseDockex):
             self.X_train = np.load(self.input_pathnames["X_train_npy"])
 
         if "y_train_npy" in self.input_pathnames.keys():
-            self.y_train = np.load(
-                self.input_pathnames["y_train_npy"], allow_pickle=True
-            )
+            self.y_train = np.load(self.input_pathnames["y_train_npy"], allow_pickle=True)
 
         if "X_valid_npy" in self.input_pathnames.keys():
             self.X_valid = np.load(self.input_pathnames["X_valid_npy"])
 
         if "y_valid_npy" in self.input_pathnames.keys():
-            self.y_valid = np.load(
-                self.input_pathnames["y_valid_npy"], allow_pickle=True
-            )
+            self.y_valid = np.load(self.input_pathnames["y_valid_npy"], allow_pickle=True)
 
         if "X_test_npy" in self.input_pathnames.keys():
             self.X_test = np.load(self.input_pathnames["X_test_npy"])
