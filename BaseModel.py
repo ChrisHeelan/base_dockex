@@ -10,12 +10,11 @@ class BaseModel(BaseDockex):
     Dockex model base class.
 
     This base class defines a model interface similar to scikit-learn. Data is
-    loaded and saved with numpy. This class exposes ```fit```, ```predict```,
+    loaded and saved with numpy. This class exposes ```fit```, ```predict```, ```fit_then_predict```,
     and ```fit_predict``` methods.
 
     Subclasses must provide an ```instantiate_model``` method that sets a
-    ```self.model``` with ```self.model.fit``` and ```self.model.predict```
-    methods.
+    ```self.model```.
 
     Subclasses may optionally provide ```load``` and ```save``` methods for
     reading/writing models; however, the module's ```predict``` method will
@@ -25,9 +24,8 @@ class BaseModel(BaseDockex):
 
     __Parameters__
 
-    * **method (```str```)**: Required. ```fit``` to train a model.
-    ```fit_predict``` to train a model and generate predictions. ```predict```
-    to load a previously saved model and generate predictions.
+    * **method (```str```)**: Required. Defines the method of self.model to call. ```fit_then_predict```
+    will cause ```self.model.fit``` to be called followed by ```self.model.predict```.
 
     * **save_model (```bool```)**: Set to ```true``` to save the model if a
     ```save``` method is implemented.
@@ -37,29 +35,14 @@ class BaseModel(BaseDockex):
 
     __Input Pathnames__
 
-    * **X_train_npy** (numpy file): 2D+ array of training set features.
+    * **X_train_npy, X_valid_npy, X_test_npy** (numpy file): Train / valid / test set features.
 
-    * **y_train_npy** (numpy file): 2D array of training set targets. May be
-    1D but will be expanded to 2D.
-
-    * **X_valid_npy** (numpy file): 2D+ array of validation set features.
-
-    * **y_valid_npy** (numpy file): 2D array of validation set targets. May be
-    1D but will be expanded to 2D.
-
-    * **X_test_npy** (numpy file): 2D+ array of testing set features.
-
-    * **y_test_npy** (numpy file): 2D array of testing set targets. May be
+    * **y_train_npy, y_valid_npy, y_test_npy** (numpy file): Train / valid / test set targets. May be
     1D but will be expanded to 2D.
 
     __Output Pathnames__
 
-    * **predict_train_npy** (numpy file): 2D array of training set predictions.
-
-    * **predict_valid_npy** (numpy file): 2D array of validation set
-    predictions.
-
-    * **predict_test_npy** (numpy file): 2D array of testing set predictions.
+    * **predict_train_npy, predict_valid_npy, predict_test_npy** (numpy file): Train / valid / test set predictions.
     """
 
     def __init__(self, input_args):
@@ -90,50 +73,42 @@ class BaseModel(BaseDockex):
             np.random.seed(self.random_seed)
             random.seed(self.random_seed)
 
+    def safe_load_input_array(self, key, allow_pickle=False):
+        if key in self.input_pathnames.keys():
+            if self.input_pathnames[key] is not None:
+                return np.load(self.input_pathnames[key], allow_pickle=allow_pickle)
+
+        return None
+
     def load_input_arrays(self):
         print("Loading inputs")
-        if "X_train_npy" in self.input_pathnames.keys():
-            self.X_train = np.load(self.input_pathnames["X_train_npy"])
-
-        if "y_train_npy" in self.input_pathnames.keys():
-            self.y_train = np.load(
-                self.input_pathnames["y_train_npy"], allow_pickle=True
-            )
-
-        if "X_valid_npy" in self.input_pathnames.keys():
-            self.X_valid = np.load(self.input_pathnames["X_valid_npy"])
-
-        if "y_valid_npy" in self.input_pathnames.keys():
-            self.y_valid = np.load(
-                self.input_pathnames["y_valid_npy"], allow_pickle=True
-            )
-
-        if "X_test_npy" in self.input_pathnames.keys():
-            self.X_test = np.load(self.input_pathnames["X_test_npy"])
-
-        if "y_test_npy" in self.input_pathnames.keys():
-            self.y_test = np.load(self.input_pathnames["y_test_npy"], allow_pickle=True)
-
-    def check_data_shape(self):
-        print("Checking data shape")
-        if len(self.y_train.shape) == 1:
-            self.y_train = np.expand_dims(self.y_train, 1)
-            self.y_valid = np.expand_dims(self.y_valid, 1)
-            self.y_test = np.expand_dims(self.y_test, 1)
+        self.X_train = self.safe_load_input_array('X_train_npy')
+        self.y_train = self.safe_load_input_array('y_train_npy', allow_pickle=True)
+        self.X_valid = self.safe_load_input_array('X_valid_npy')
+        self.y_valid = self.safe_load_input_array('y_valid_npy', allow_pickle=True)
+        self.X_test = self.safe_load_input_array('X_test_npy')
+        self.y_test = self.safe_load_input_array('y_test_npy', allow_pickle=True)
 
     @abc.abstractmethod
     def instantiate_model(self):
         """
-        This method should set ```self.model``` which should include
-        ```self.model.fit``` and ```self.model.predict``` methods.
+        This method should set ```self.model```.
         """
         pass
 
     def fit(self):
-        self.instantiate_model()
-
         print("Fitting model")
-        self.model.fit(self.X_train, self.y_train)
+        if self.y_train is not None:
+            self.model.fit(self.X_train, self.y_train)
+        else:
+            self.model.fit(self.X_train)
+
+    def fit_predict(self):
+        print("Fitting model")
+        if self.y_train is not None:
+            self.model.fit_predict(self.X_train, self.y_train)
+        else:
+            self.model.fit_predict(self.X_train)
 
     def predict(self):
         print("Predicting")
@@ -169,12 +144,17 @@ class BaseModel(BaseDockex):
         self.set_random_seeds()
 
         self.load_input_arrays()
-        self.check_data_shape()
 
         if self.method == "fit":
+            self.instantiate_model()
             self.fit()
 
         elif self.method == "fit_predict":
+            self.instantiate_model()
+            self.fit_predict()
+
+        elif self.method == "fit_then_predict":
+            self.instantiate_model()
             self.fit()
             self.predict()
 
