@@ -104,7 +104,7 @@ class BaseModel(BaseDockex):
             self.model.fit(self.X_train)
 
     def fit_predict(self):
-        print("Fitting model")
+        print("Fit_predicting model")
         if self.y_train is not None:
             self.model.fit_predict(self.X_train, self.y_train)
         else:
