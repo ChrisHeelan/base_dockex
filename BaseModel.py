@@ -121,6 +121,17 @@ class BaseModel(BaseDockex):
         if self.X_test is not None:
             self.predict_test = self.model.predict(self.X_test)
 
+    def predict_proba(self):
+        print("Predicting probabilities")
+        if self.X_train is not None:
+            self.predict_train = self.model.predict_proba(self.X_train)
+
+        if self.X_valid is not None:
+            self.predict_valid = self.model.predict_proba(self.X_valid)
+
+        if self.X_test is not None:
+            self.predict_test = self.model.predict_proba(self.X_test)
+
     def load(self):
         raise NotImplementedError
 
@@ -158,9 +169,18 @@ class BaseModel(BaseDockex):
             self.fit()
             self.predict()
 
+        elif self.method == "fit_then_predict_proba":
+            self.instantiate_model()
+            self.fit()
+            self.predict_proba()
+
         elif self.method == "predict":
             self.load()
             self.predict()
+
+        elif self.method == "predict_proba":
+            self.load()
+            self.predict_proba()
 
         if self.method != "fit":
             self.save_output_arrays()
